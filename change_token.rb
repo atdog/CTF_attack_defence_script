@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
 require "./mylib/Workstation"
+require "./AdminConfig"
 require "digest"
 require 'securerandom'
 require 'sqlite3'
@@ -22,7 +23,9 @@ class DB
 end
 
 if __FILE__ == $0
-    db = DB.new("/ctf/scoreboard/db/scoreboard.sqlite3")
+    challenger = AdminConfig.challenger
+
+    db = DB.new(AdminConfig.db)
 
     sha256 = Digest::SHA256.new
 
@@ -48,12 +51,12 @@ if __FILE__ == $0
         digest = sha256.digest msg
         token = digest.unpack("H*")[0]
 
-        service_flag_dir = "/home/user/flags/#{service_user}/"
+        service_flag_dir = "/home/#{challenger}/flags/#{service_user}/"
 
-        w = Workstation.new(host, "root", "./id_rsa")
+        w = Workstation.new(host, "root", AdminConfig.root_privatekey)
         # check user exist
-        puts "Check user exist"
-        w.exec_remote("id user")
+        puts "Check user #{challenger} exist"
+        w.exec_remote("id #{challenger}")
         # create folder
         puts "Create flag directory"
         w.exec_remote("mkdir -p #{service_flag_dir}")
@@ -69,5 +72,6 @@ if __FILE__ == $0
         db.insert_flag(token, team_id, service_id, round)
 
     end
+
     pool.shutdown
 end
