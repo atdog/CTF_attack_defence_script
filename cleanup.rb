@@ -20,6 +20,10 @@ def cleanup
         puts "Remove user: service1"
         w.exec_remote("id service1")
         w.exec_remote("deluser --remove-all-files service1")
+
+        puts "Remove service"
+        w.exec_remote("rm -f /etc/xinetd.d/*")
+        puts w.exec_remote("service xinetd restart")
     rescue
     end
 end
