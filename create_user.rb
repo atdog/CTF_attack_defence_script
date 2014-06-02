@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
 require "./mylib/Workstation"
+require "./cleanup.rb"
 
 # main
 if __FILE__ == $0
@@ -10,12 +11,7 @@ if __FILE__ == $0
     w = Workstation.new(host, "root", "./id_rsa")
 
     puts "Clean up related data"
-    begin
-        w.exec_remote("id user")
-        w.exec_remote("deluser --remove-all-files user")
-        w.exec_local("rm -f ./user_keys/#{user_key}*")
-    rescue
-    end
+    cleanup
 
     puts "Create user: user"
     w.exec_remote("useradd -m user")
