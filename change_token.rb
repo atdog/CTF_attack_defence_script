@@ -1,26 +1,11 @@
 #!/usr/bin/env ruby
 
 require "./mylib/Workstation"
+require "./mylib/DB"
 require "./AdminConfig"
 require "digest"
 require 'securerandom'
-require 'sqlite3'
 require 'thread/pool'
-
-class DB
-    def initialize(db)
-        fail "Database not exist - #{db}" if not File.exist? db
-        @db = SQLite3::Database.new( db )
-    end
-
-    def insert_flag(token, team_id, service_id, round)
-        @db.execute( "insert into FLAG (value, team_id, service_id, round) values (:token, :team_id, :service_id, :round)",
-        "token" => token,
-        "team_id" => team_id,
-        "service_id" => service_id,
-        "round" => round)
-    end
-end
 
 if __FILE__ == $0
     challenger = AdminConfig.challenger
