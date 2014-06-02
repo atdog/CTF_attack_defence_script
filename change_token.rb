@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-require "./Workstation"
+require "./mylib/Workstation"
 require "digest"
 require 'securerandom'
 
