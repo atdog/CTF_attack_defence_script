@@ -17,6 +17,8 @@ if __FILE__ == $0
     service_flag_dir = "/home/user/flags/#{service_user}/"
 
     w = Workstation.new(host, "root", "./id_rsa")
+    # check user exist
+    w.exec_remote("id user")
     # create folder
     w.exec_remote("mkdir -p #{service_flag_dir}")
     w.exec_remote("chown #{service_user}:#{service_user} #{service_flag_dir}")
