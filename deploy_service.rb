@@ -16,8 +16,6 @@ if __FILE__ == $0
 
     puts "Cleanup /etc/services"
     w.exec_remote("sed -E '/#{service_name}\\s+#{service_port}/d' -i /etc/services")
-    w.exec_remote("rm -f /etc/xinetd.d/#{service_name}")
-    w.exec_remote("rm -r /home/#{challenger}/services/#{service_name}")
 
     puts "Deploy service - #{service_name}"
     w.copy_to_remote("./services/#{service_id}/#{service_name}")
