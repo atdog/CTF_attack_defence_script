@@ -6,10 +6,23 @@ require 'securerandom'
 require 'sqlite3'
 require 'thread/pool'
 
+class DB
+    def initialize(db)
+        fail "Database not exist - #{db}" if not File.exist? db
+        @db = SQLite3::Database.new( db )
+    end
+
+    def insert_flag(token, team_id, service_id, round)
+        @db.execute( "insert into FLAG (value, team_id, service_id, round) values (:token, :team_id, :service_id, :round)",
+        "token" => token,
+        "team_id" => team_id,
+        "service_id" => service_id,
+        "round" => round)
+    end
+end
+
 if __FILE__ == $0
-    db = "/ctf/scoreboard/db/scoreboard.sqlite3"
-    fail "Database not exist - #{db}" if not File.exist? db
-    db = SQLite3::Database.new( db )
+    db = DB.new("/ctf/scoreboard/db/scoreboard.sqlite3")
 
     sha256 = Digest::SHA256.new
 
@@ -53,7 +66,7 @@ if __FILE__ == $0
         w.exec_remote("chmod 600 #{service_flag_dir}/flag")
         # write db
         puts "Write into database"
-        rows = db.execute( "insert into FLAG (value, team_id, service_id, round) values ('#{token}',#{team_id},#{service_id},#{round})" )
+        db.insert_flag(token, team_id, service_id, round)
 
     end
     pool.shutdown
