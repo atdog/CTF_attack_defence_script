@@ -47,6 +47,8 @@ if __FILE__ == $0
         w.exec_remote("mkdir -p #{service_flag_dir}")
         w.exec_remote("chown #{service_user}:#{service_user} #{service_flag_dir}")
         w.exec_remote("chmod 700 #{service_flag_dir}")
+        # set owner
+        w.exec_remote("chown #{challenger}:#{challenger} /home/#{challenger}/flags")
         # set new flag
         puts "Place new flag"
         w.exec_remote("echo #{token} > #{service_flag_dir}/flag")
