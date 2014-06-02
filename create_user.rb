@@ -30,5 +30,7 @@ if __FILE__ == $0
     w.exec_remote("chown user:user /home/user/.ssh/authorized_keys")
     w.exec_remote("chmod 644 /home/user/.ssh/authorized_keys")
 
+    puts "Create service user: service1"
+    w.exec_remote("useradd service1")
     puts "Done"
 end

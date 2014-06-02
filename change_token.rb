@@ -13,12 +13,17 @@ if __FILE__ == $0
     digest = sha256.digest msg
     token = digest.unpack("H*")[0]
 
-    service = "user"
-    service_flag = "/home/user/flag"
+    service_user = "service1"
+    service_flag_dir = "/home/user/flags/#{service_user}/"
 
     w = Workstation.new(host, "root", "./id_rsa")
-    w.exec_remote("echo #{token} > #{service_flag}")
-    w.exec_remote("chown #{service}:#{service} #{service_flag}")
-    w.exec_remote("chmod 700 #{service_flag}")
+    # create folder
+    w.exec_remote("mkdir -p #{service_flag_dir}")
+    w.exec_remote("chown #{service_user}:#{service_user} #{service_flag_dir}")
+    w.exec_remote("chmod 700 #{service_flag_dir}")
+    # set new flag
+    w.exec_remote("echo #{token} > #{service_flag_dir}/flag")
+    w.exec_remote("chown #{service_user}:#{service_user} #{service_flag_dir}/flag")
+    w.exec_remote("chmod 600 #{service_flag_dir}/flag")
 
 end
