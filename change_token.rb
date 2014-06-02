@@ -2,9 +2,8 @@
 
 require "./mylib/Workstation"
 require "./mylib/DB"
+require "./mylib/Token"
 require "./AdminConfig"
-require "digest"
-require 'securerandom'
 require 'thread/pool'
 
 if __FILE__ == $0
@@ -12,7 +11,7 @@ if __FILE__ == $0
 
     db = DB.new(AdminConfig.db)
 
-    sha256 = Digest::SHA256.new
+    flag = Token.new()
 
     round = 1
 
@@ -32,9 +31,7 @@ if __FILE__ == $0
         service_id = arg['service_id']
         service_user = arg['service_user']
 
-        msg = SecureRandom.hex(1024)
-        digest = sha256.digest msg
-        token = digest.unpack("H*")[0]
+        token = flag.gen
 
         service_flag_dir = "/home/#{challenger}/flags/#{service_user}/"
 
