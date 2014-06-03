@@ -42,15 +42,15 @@ if __FILE__ == $0
         # create folder
         puts "Create flag directory"
         w.exec_remote("mkdir -p #{service_flag_dir}")
-        w.exec_remote("chown #{service_user}:#{service_user} #{service_flag_dir}")
-        w.exec_remote("chmod 700 #{service_flag_dir}")
+        w.exec_remote("chown root:#{service_user} #{service_flag_dir}")
+        w.exec_remote("chmod 750 #{service_flag_dir}")
         # set owner
         w.exec_remote("chown #{challenger}:#{challenger} /home/#{challenger}/flags")
         # set new flag
         puts "Place new flag"
         w.exec_remote("echo #{token} > #{service_flag_dir}/flag")
-        w.exec_remote("chown #{service_user}:#{service_user} #{service_flag_dir}/flag")
-        w.exec_remote("chmod 600 #{service_flag_dir}/flag")
+        w.exec_remote("chown root:#{service_user} #{service_flag_dir}/flag")
+        w.exec_remote("chmod 440 #{service_flag_dir}/flag")
         # write db
         puts "Write into database"
         db.insert_flag(token, team_id, service_id, round)
