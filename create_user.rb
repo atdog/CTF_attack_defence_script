@@ -32,6 +32,10 @@ if __FILE__ == $0
     w.exec_remote("chown #{challenger}:#{challenger} /home/#{challenger}/.ssh/authorized_keys")
     w.exec_remote("chmod 644 /home/#{challenger}/.ssh/authorized_keys")
 
+    puts "Setup sudoers"
+    w.exec_remote("echo 'Cmnd_Alias XINETD = /usr/sbin/service xinetd restart' >> /etc/sudoers")
+    w.exec_remote("echo '#{challenger} ALL=(root) NOPASSWD: XINETD' >> /etc/sudoers")
+
     puts "Create service user: service1"
     w.exec_remote("useradd service1")
     puts "Done"
