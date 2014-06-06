@@ -4,11 +4,12 @@ require "open3"
 require "thread/pool"
 
 class Workstation
-    attr_accessor :services, :id, :host
+    attr_accessor :services, :team_id, :host
 
-    def initialize(ctfid, host, user = "root", private_key = AdminConfig.root_privatekey, challenger = AdminConfig.challenger)
+    def initialize(ctfid, team_id, host, user = "root", private_key = AdminConfig.root_privatekey, challenger = AdminConfig.challenger)
         fail "Private key is missing." if not File.exist?(private_key)
         @ctfid = ctfid
+        @team_id = team_id
         @host = host
         @user = user 
         @private_key = private_key
@@ -127,11 +128,11 @@ class Workstation
         pool.shutdown
     end
 
-    def check_services_status
+    def check_services_status(round = 1)
         pool = Thread.pool(8)
         services.each do |service|
             pool.process do
-                service.portscan
+                service.portscan round
             end
         end
         pool.shutdown
