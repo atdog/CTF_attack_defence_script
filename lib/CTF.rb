@@ -24,7 +24,7 @@ class CTF
             fail "Query ctfs error" 
         end
 
-        fail "No CTF id - #{@id}" if not ctfs.size
+        fail "No CTF id - #{@id}" if ctfs == nil
         puts "[+] CTF #{ctfs[0][1]} - id: #{@id}"
     end
 
