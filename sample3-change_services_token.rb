@@ -22,7 +22,7 @@ if __FILE__ == $0
             w.change_services_token round
             # set next round
             round += 1
-            o, s = Open3.capture2("at now + 5 min", :stdin_data => "/home/atdog/.rvm/rubies/ruby-2.1.2/bin/ruby /home/atdog/admin_script/sample3-change_services_token.rb #{ctf_id} #{max_round} #{round} >> /home/atdog/admin_script/change_token.log")
+            o, s = Open3.capture2("at now + 5 min", :stdin_data => "/home/atdog/.rvm/rubies/ruby-2.1.2/bin/ruby /home/atdog/admin_script/sample3-change_services_token.rb #{ctf_id} #{max_round} #{round} >> /home/atdog/admin_script/change_token.log 2>&1 ")
             puts o
         end
     else
