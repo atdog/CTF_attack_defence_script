@@ -22,7 +22,7 @@ class Token
                        "service_id" => service_id,
                        "round" => round)
         rescue
-            fail "Query teams error" 
+            fail "insert token error" 
         end
     end
 end
