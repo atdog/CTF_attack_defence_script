@@ -1,0 +1,27 @@
+1 round
+
+Assume we have 5 services
+
+10 score for each flag
+
+1 round / 5 mins
+
+
+==== Total score ====
+
+Assume we have 6 hrs ->  360 mins -> 72 rounds
+
+10 score * 5 services = 50 scores in 1 round
+
+total = 72 * 50 = 3600
+
+
+==== check status ====
+
+Service closed -10 score
+Service not function -5 score
+
+
+==== score per round ====
++) 1 flag: + 10 score / how many team get this flag
+-) 1 flag: - 10 score
