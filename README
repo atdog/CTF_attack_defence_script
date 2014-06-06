@@ -1,2 +1,4 @@
+You need install the following things on your template.
+
 1. apt-get install xinetd
 1. root ssh private key
