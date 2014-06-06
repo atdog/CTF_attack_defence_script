@@ -68,7 +68,7 @@ class Service
         # set owner
         @w.exec_remote("chown #{@challenger}:#{@challenger} /home/#{@challenger}/flags")
         # set new flag
-        puts "Place new flag"
+        puts "Place new flag - #{service_token}"
         @w.exec_remote("echo #{service_token} > #{service_flag_dir}/flag")
         @w.exec_remote("chown root:#{service_user} #{service_flag_dir}/flag")
         @w.exec_remote("chmod 440 #{service_flag_dir}/flag")
