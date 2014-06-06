@@ -4,9 +4,10 @@ require_relative "AdminConfig"
 require "sqlite3"
 
 class CTF
-    attr_accessor :teams, :workstations
+    attr_accessor :teams, :workstations, :id
     
-    def initialize
+    def initialize(id)
+        @id = id
         init_teams
         init_workstations
     end
