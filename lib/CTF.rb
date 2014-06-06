@@ -8,17 +8,33 @@ class CTF
     
     def initialize(id)
         @id = id
+        validate_ctf
         init_teams
         init_workstations
+    end
+
+    def validate_ctf
+        db = AdminConfig.db
+        fail "Database not exist - #{db}" if not File.exist? db
+        db = SQLite3::Database.open( db )
+
+        begin
+            ctfs = db.execute( "select * from ctfs where id = 1")
+        rescue
+            fail "Query ctfs error" 
+        end
+
+        fail "No CTF id - #{@id}" if not ctfs.size
+        puts "[+] CTF #{ctfs[0][1]} - id: #{@id}"
     end
 
     def init_teams
         db = AdminConfig.db
         fail "Database not exist - #{db}" if not File.exist? db
-        @db = SQLite3::Database.open( db )
+        db = SQLite3::Database.open( db )
 
         begin
-            teams = @db.execute("select * from teams")
+            teams = db.execute("select * from teams")
         rescue
             fail "Query teams error" 
         end
@@ -33,7 +49,7 @@ class CTF
     def init_workstations
         @workstations = []
         @teams.each do |team|
-            team["workstation"] = Workstation.new(team["ip"])
+            team["workstation"] = Workstation.new(@id, team["ip"])
             @workstations.push team["Workstation"]
         end
     end
@@ -50,5 +66,5 @@ class CTF
         end
     end
 
-    private :init_teams, :init_workstations
+    private :init_teams, :init_workstations, :validate_ctf
 end
