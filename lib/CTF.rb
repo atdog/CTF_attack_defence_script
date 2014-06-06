@@ -19,7 +19,7 @@ class CTF
         db = SQLite3::Database.open( db )
 
         begin
-            ctfs = db.execute( "select * from ctfs where id = 1")
+            ctfs = db.execute( "select * from ctfs where id = :id", "id" => @id)
         rescue
             fail "Query ctfs error" 
         end
