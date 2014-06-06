@@ -4,10 +4,10 @@ require_relative "AdminConfig"
 require "sqlite3"
 
 class CTF
-    attr_accessor :teams, :workstations, :id
+    attr_accessor :teams, :workstations, :ctf_id
     
-    def initialize(id)
-        @id = id
+    def initialize(ctf_id)
+        @ctf_id = ctf_id
         validate_ctf
         init_teams
         init_workstations
@@ -19,13 +19,13 @@ class CTF
         db = SQLite3::Database.open( db )
 
         begin
-            ctfs = db.execute( "select * from ctfs where id = :id", "id" => @id)
+            ctfs = db.execute( "select * from ctfs where id = :id", "id" => @ctf_id)
         rescue
             fail "Query ctfs error" 
         end
 
-        fail "No CTF id - #{@id}" if ctfs == nil
-        puts "[+] CTF #{ctfs[0][1]} - id: #{@id}"
+        fail "No CTF id - #{@ctf_id}" if ctfs == nil
+        puts "[+] CTF #{ctfs[0][1]} - id: #{@ctf_id}"
     end
 
     def init_teams
@@ -34,7 +34,7 @@ class CTF
         db = SQLite3::Database.open( db )
 
         begin
-            teams = db.execute("select * from teams where id in (select team_id from attendents where ctf_id = :ctfid)", "ctfid" => @id)
+            teams = db.execute("select * from teams where id in (select team_id from attendents where ctf_id = :ctfid)", "ctfid" => @ctf_id)
         rescue
             fail "Query teams error" 
         end
@@ -49,7 +49,7 @@ class CTF
     def init_workstations
         @workstations = []
         @teams.each do |team|
-            team["workstation"] = Workstation.new(@id, team["ip"])
+            team["workstation"] = Workstation.new(@ctf_id, team["id"], team["ip"])
             @workstations.push team["Workstation"]
         end
     end
