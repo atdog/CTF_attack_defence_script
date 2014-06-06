@@ -34,7 +34,7 @@ class CTF
         db = SQLite3::Database.open( db )
 
         begin
-            teams = db.execute("select * from teams")
+            teams = db.execute("select * from teams where id in (select team_id from attendents where ctf_id = :ctfid)", "ctfid" => @id)
         rescue
             fail "Query teams error" 
         end

@@ -21,7 +21,7 @@ class Workstation
         db = SQLite3::Database.open( db )
 
         begin
-            services = db.execute("select * from services")
+            services = db.execute("select * from services where ctf_id = :ctfid", "ctfid" => @ctfid)
         rescue
             fail "Query services error" 
         end
