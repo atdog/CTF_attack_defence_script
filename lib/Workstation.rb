@@ -1,13 +1,13 @@
 require_relative "AdminConfig"
-require_relative "Token"
 require_relative "Service"
 require "open3"
 
 class Workstation
-    attr_accessor :services
+    attr_accessor :services, :id, :host
 
-    def initialize(host, user = "root", private_key = AdminConfig.root_privatekey, challenger = AdminConfig.challenger)
+    def initialize(ctfid, host, user = "root", private_key = AdminConfig.root_privatekey, challenger = AdminConfig.challenger)
         fail "Private key is missing." if not File.exist?(private_key)
+        @ctfid = ctfid
         @host = host
         @user = user 
         @private_key = private_key
@@ -18,12 +18,12 @@ class Workstation
     def init_services
         db = AdminConfig.db
         fail "Database not exist - #{db}" if not File.exist? db
-        @db = SQLite3::Database.open( db )
+        db = SQLite3::Database.open( db )
 
         begin
-            services = @db.execute("select * from services")
+            services = db.execute("select * from services")
         rescue
-            fail "Query teams error" 
+            fail "Query services error" 
         end
 
         @services = []
@@ -116,33 +116,16 @@ class Workstation
         end
     end
 
-    def change_token(round = 1)
-        team_id = 1
-        service_id = 1
-        service_user = "service1"
+    def change_services_token(round = 1)
+        services.each do |service|
+            service.change_token round
+        end
+    end
 
-        token = Token.new()
-        service_token = token.gen
-
-        service_flag_dir = "/home/#{@challenger}/flags/#{service_user}/"
-
-        # check user exist
-        puts "Check user #{@challenger} exist"
-        exec_remote("id #{@challenger}")
-        # create folder
-        puts "Create flag directory"
-        exec_remote("mkdir -p #{service_flag_dir}")
-        exec_remote("chown root:#{service_user} #{service_flag_dir}")
-        exec_remote("chmod 750 #{service_flag_dir}")
-        # set owner
-        exec_remote("chown #{@challenger}:#{@challenger} /home/#{@challenger}/flags")
-        # set new flag
-        puts "Place new flag"
-        exec_remote("echo #{service_token} > #{service_flag_dir}/flag")
-        exec_remote("chown root:#{service_user} #{service_flag_dir}/flag")
-        exec_remote("chmod 440 #{service_flag_dir}/flag")
-        # write db
-        token.insert(service_token, team_id, service_id, round)
+    def check_services_status
+        services.each do |service|
+            service.portscan
+        end
     end
 
     private :init_services
