@@ -32,7 +32,7 @@ class Service
         @w.exec_remote("chmod 771 /home/#{@challenger}/services/#{service_name}/service")
 
         puts "Setup xinetd"
-        @w.copy_to_remote("./services/#{service_id}/#{service_name}_xinetd")
+        @w.copy_to_remote("#{AdminConfig.services_dir}/#{service_id}/#{service_name}_xinetd")
         @w.exec_remote("mv #{service_name}_xinetd /etc/xinetd.d")
 
         puts "Write /etc/services"
