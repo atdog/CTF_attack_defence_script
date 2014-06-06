@@ -48,7 +48,7 @@ class Service
     end
 
     def change_token(round)
-        team_id = @w.id
+        team_id = @w.team_id
         service_id = @id
         service_user = @name
 
@@ -76,16 +76,41 @@ class Service
         token.insert(service_token, team_id, service_id, round)
     end
 
-    def portscan
+    def portscan(round = 1)
+        team_id = @w.team_id
         STDOUT.write "PortScan ##{@port} on #{@w.host} - "
         o, s = Open3.capture2("nmap -Pn -p #{@port} #{@w.host}")
 
         fail o if not s.success?
         if o =~ /#{@port}\/tcp open/n
             puts "open"
+            db = SQLite3::Database.open(AdminConfig.db)
+
+            begin
+                db.execute( "insert into service_states (team_id, service_id, state, round, log) values (:team_id, :service_id, :state, :round, :log)",
+                           "team_id" => team_id,
+                           "service_id" => @id,
+                           "state" => 0,
+                           "round" => round,
+                           "log" => o)
+            rescue
+                fail "insert service_states error" 
+            end
             return true
         end
         puts "close"
+        db = SQLite3::Database.open(AdminConfig.db)
+
+        begin
+            db.execute( "insert into service_states (team_id, service_id, state, round, log) values (:team_id, :service_id, :state, :round, :log)",
+                       "team_id" => team_id,
+                       "service_id" => @id,
+                       "state" => 1,
+                       "round" => round,
+                       "log" => o)
+        rescue
+            fail "insert service_states error" 
+        end
         return false
     end
 end
