@@ -10,8 +10,8 @@ if __FILE__ == $0
         exit
     end
     ctf_id = ARGV[0]
-    max_round = ARGV[1]
-    round = ARGV[2]
+    max_round = ARGV[1].to_i
+    round = ARGV[2].to_i
 
     if round <= max_round
         ctf = CTF.new ctf_id
