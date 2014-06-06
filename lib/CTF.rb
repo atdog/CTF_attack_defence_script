@@ -1,0 +1,53 @@
+require_relative "Workstation"
+require_relative "AdminConfig"
+
+require "sqlite3"
+
+class CTF
+    attr_accessor :teams, :workstations
+    
+    def initialize
+        init_teams
+        init_workstations
+    end
+
+    def init_teams
+        db = AdminConfig.db
+        fail "Database not exist - #{db}" if not File.exist? db
+        @db = SQLite3::Database.open( db )
+
+        begin
+            teams = @db.execute("select * from teams")
+        rescue
+            fail "Query teams error" 
+        end
+
+        @teams = []
+        teams.each do |team|
+            @teams.push({ "id" => team[0], "name" => team[1], "ip" => team[2] })
+            break
+        end
+    end
+
+    def init_workstations
+        @workstations = []
+        @teams.each do |team|
+            team["workstation"] = Workstation.new(team["ip"])
+            @workstations.push team["Workstation"]
+        end
+    end
+
+    def each_team
+        @teams.each do |team|
+            yield team
+        end
+    end
+
+    def each_workstation
+        @workstations.each do |workstation|
+            yield workstation
+        end
+    end
+
+    private :init_teams, :init_workstations
+end
