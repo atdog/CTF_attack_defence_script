@@ -1,6 +1,7 @@
 require_relative "AdminConfig"
 require_relative "Service"
 require "open3"
+require "thread/pool"
 
 class Workstation
     attr_accessor :services, :id, :host
@@ -117,15 +118,23 @@ class Workstation
     end
 
     def change_services_token(round = 1)
+        pool = Thread.pool(8)
         services.each do |service|
-            service.change_token round
+            pool.process do
+                service.change_token round
+            end
         end
+        pool.shutdown
     end
 
     def check_services_status
+        pool = Thread.pool(8)
         services.each do |service|
-            service.portscan
+            pool.process do
+                service.portscan
+            end
         end
+        pool.shutdown
     end
 
     private :init_services
