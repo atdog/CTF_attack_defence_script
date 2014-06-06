@@ -19,8 +19,9 @@ if __FILE__ == $0
         w.setup_sudoers
 
         w.deploy_services
-        w.change_services_token
-
-        w.check_services_status
+        # change token
+#          w.change_services_token
+        # check status
+#          w.check_services_status
     end
 end
