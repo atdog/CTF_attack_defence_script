@@ -42,10 +42,17 @@ if __FILE__ == $0
         puts o
 
         # new at
+        service_check_time = Random.rand(4) + 1
+        o, s = Open3.capture2("at now + #{service_check_time} min", :stdin_data => "/home/atdog/.rvm/rubies/ruby-2.1.2/bin/ruby /home/atdog/admin_script/sample4-service_check.rb #{ctf_id} #{round} >> /home/atdog/admin_script/service_check.log 2>&1 ")
+        puts o
+
         round += 1
         o, s = Open3.capture2("at now + 5 min", :stdin_data => "/home/atdog/.rvm/rubies/ruby-2.1.2/bin/ruby /home/atdog/admin_script/sample3-change_services_token.rb #{ctf_id} #{max_round} #{round} >> /home/atdog/admin_script/change_token.log 2>&1 ")
         puts o
     else
+        o, s = Open3.capture2("cd /ctf/scoreboard/ && /home/atdog/.rvm/rubies/ruby-2.1.2/bin/rake scoring:current")
+        fail "Failed to rake scoring:current" if not s.success?
+        puts o
         puts "Close CTF"
     end
 end
