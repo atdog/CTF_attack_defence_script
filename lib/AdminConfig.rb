@@ -5,5 +5,5 @@ class AdminConfig
     @challenger = "challenger"
     @root_privatekey = "/home/atdog/admin_script/id_rsa"
     @user_key_dir = "/home/atdog/admin_script/user_keys/"
-    @services_dir = "/home/atdog/admin_script/services/"
+    @services_dir = "/ctf/services/betactf/"
 end
