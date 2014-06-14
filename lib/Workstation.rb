@@ -94,10 +94,12 @@ class Workstation
             exec_remote("deluser --remove-all-files #{@challenger} 2>/dev/null")
             exec_local("rm -f #{AdminConfig.user_key_dir}/#{@challenger}@#{@host}*")
 
-            service_name = "service1"
-            puts "Remove user: #{service_name}"
-            exec_remote("id #{service_name}")
-            exec_remote("deluser --remove-all-files #{service_name} 2>/dev/null")
+            @services.each do |service|
+                service_name = service.name
+                puts "Remove user: #{service_name}"
+                exec_remote("id #{service_name}")
+                exec_remote("deluser --remove-all-files #{service_name} 2>/dev/null")
+            end
 
             puts "Remove service"
             exec_remote("rm -f /etc/xinetd.d/*")
@@ -113,14 +115,14 @@ class Workstation
     end
 
     def deploy_services
-        services.each do |service|
+        @services.each do |service|
             service.deploy
         end
     end
 
     def change_services_token(round = 1)
         pool = Thread.pool(8)
-        services.each do |service|
+        @services.each do |service|
             pool.process do
                 service.change_token round
             end
@@ -130,7 +132,7 @@ class Workstation
 
     def check_services_status(round = 1)
         pool = Thread.pool(8)
-        services.each do |service|
+        @services.each do |service|
             pool.process do
                 service.portscan round
             end
