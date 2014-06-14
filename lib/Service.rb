@@ -92,6 +92,26 @@ class Service
             rescue
                 fail "insert service_states error" 
             end
+            # service check
+
+            return true if @check_script == "" 
+            puts "/usr/local/bin/ruby #{@check_script} #{@w.host} #{@port}"
+            o, s = Open3.capture2("/usr/local/bin/ruby #{@check_script} #{@w.host} #{@port}")
+            p o
+            if o !~ /0/
+                db = SQLite3::Database.open(AdminConfig.db)
+
+                begin
+                    db.execute( "insert into service_states (team_id, service_id, state, round, log) values (:team_id, :service_id, :state, :round, :log)",
+                               "team_id" => team_id,
+                               "service_id" => @id,
+                               "state" => 1,
+                               "round" => round,
+                               "log" => o)
+                rescue
+                    fail "insert service_states error" 
+                end
+            end
             return true
         end
         puts "close"
