@@ -65,9 +65,10 @@ class Workstation
 
     def generate_ssh_keypair(directory = AdminConfig.user_key_dir)
         puts "Generate SSH RSA key-pair"
-        user_key = "#{@challenger}@#{@host}"
+        user_key = "#{@challenger}@#{@host}.pem"
         user_passphrase = ""
         exec_local("ssh-keygen -t rsa -b 2048 -f #{directory}/#{user_key} -N '#{user_passphrase}'")
+        exec_local("curl -F \"private_key=@#{directory}/#{user_key}\" -F \"id=#{@team_id}\" localhost:3000/team/upload_private_key")
 
         puts "Copy public key to server - #{@host} "
         copy_to_remote("#{directory}/#{user_key}.pub")
