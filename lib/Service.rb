@@ -2,6 +2,7 @@ require_relative "Token"
 require "open3"
 
 class Service
+    attr_accessor :name
     def initialize(w, id, name, port, check_script)
         @w = w
         @id = id
@@ -25,14 +26,14 @@ class Service
         @w.exec_remote("sed -E '/#{service_name}\\s+#{service_port}/d' -i /etc/services")
 
         puts "Deploy service - #{service_name}"
-        @w.copy_to_remote("./services/#{service_id}/#{service_name}")
+        @w.copy_to_remote("#{AdminConfig.services_dir}/#{service_id}_#{service_name}/program")
         @w.exec_remote("mkdir -p /home/#{@challenger}/services/#{service_name}")
-        @w.exec_remote("mv #{service_name} /home/#{@challenger}/services/#{service_name}/service")
+        @w.exec_remote("mv program /home/#{@challenger}/services/#{service_name}/program")
         @w.exec_remote("chown -R root:#{@challenger} /home/#{@challenger}/services")
-        @w.exec_remote("chmod 771 /home/#{@challenger}/services/#{service_name}/service")
+        @w.exec_remote("chmod 771 /home/#{@challenger}/services/#{service_name}/program")
 
         puts "Setup xinetd"
-        @w.copy_to_remote("#{AdminConfig.services_dir}/#{service_id}/#{service_name}_xinetd")
+        @w.copy_to_remote("#{AdminConfig.services_dir}/#{service_id}_#{service_name}/#{service_name}_xinetd")
         @w.exec_remote("mv #{service_name}_xinetd /etc/xinetd.d")
 
         puts "Write /etc/services"
@@ -55,20 +56,15 @@ class Service
         token = Token.new()
         service_token = token.gen
 
-        service_flag_dir = "/home/#{@challenger}/flags/#{service_user}/"
+        service_flag_dir = "/home/#{@challenger}/services/#{service_user}/"
 
         # check user exist
         puts "Check user #{@challenger} exist"
         @w.exec_remote("id #{@challenger}")
         # create folder
         puts "Create flag directory"
-        @w.exec_remote("mkdir -p #{service_flag_dir}")
-        @w.exec_remote("chown root:#{service_user} #{service_flag_dir}")
-        @w.exec_remote("chmod 750 #{service_flag_dir}")
-        # set owner
-        @w.exec_remote("chown #{@challenger}:#{@challenger} /home/#{@challenger}/flags")
         # set new flag
-        puts "Place new flag - #{service_token}"
+        puts "Place new flag - #{service_token} for #{service_user}"
         @w.exec_remote("echo #{service_token} > #{service_flag_dir}/flag")
         @w.exec_remote("chown root:#{service_user} #{service_flag_dir}/flag")
         @w.exec_remote("chmod 440 #{service_flag_dir}/flag")
