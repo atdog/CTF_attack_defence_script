@@ -42,7 +42,7 @@ class CTF
         @teams = []
         teams.each do |team|
             @teams.push({ "id" => team[0], "name" => team[1], "ip" => team[2] })
-            break
+#              break
         end
     end
 
