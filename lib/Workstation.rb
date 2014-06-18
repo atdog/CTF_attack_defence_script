@@ -113,6 +113,9 @@ class Workstation
         puts "Setup sudoers to let user restart xinetd as root"
         exec_remote("echo 'Cmnd_Alias XINETD = /usr/sbin/service xinetd restart' >> /etc/sudoers")
         exec_remote("echo '#{@challenger} ALL=(root) NOPASSWD: XINETD' >> /etc/sudoers")
+        @services.each do |service|
+            exec_remote("echo '#{@challenger} ALL=(root) NOPASSWD: /bin/su #{service.name}' >> /etc/sudoers")
+        end
     end
 
     def deploy_services
