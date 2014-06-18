@@ -28,9 +28,14 @@ class Service
         puts "Deploy service - #{service_name}"
         @w.copy_to_remote("#{AdminConfig.services_dir}/#{service_id}_#{service_name}/program")
         @w.exec_remote("mkdir -p /home/#{@challenger}/services/#{service_name}")
-        @w.exec_remote("mv program /home/#{@challenger}/services/#{service_name}/program")
+        # bakeup
+        @w.exec_remote("cp program /home/#{@challenger}/#{service_name}")
+        @w.exec_remote("chown root:#{@challenger} /home/#{@challenger}/#{service_name}")
+        @w.exec_remote("chmod 440 /home/#{@challenger}/#{service_name}")
+        # move program
+        @w.exec_remote("mv program /home/#{@challenger}/services/#{service_name}")
         @w.exec_remote("chown -R root:#{@challenger} /home/#{@challenger}/services")
-        @w.exec_remote("chmod 771 /home/#{@challenger}/services/#{service_name}/program")
+        @w.exec_remote("chmod 770 /home/#{@challenger}/services/#{service_name}")
 
         puts "Setup xinetd"
         @w.copy_to_remote("#{AdminConfig.services_dir}/#{service_id}_#{service_name}/#{service_name}_xinetd")
